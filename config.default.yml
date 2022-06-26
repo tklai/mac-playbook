@@ -1,0 +1,13 @@
+---
+
+homebrew_taps:
+  - homebrew/core
+  - homebrew/cask
+
+homebrew_packages:
+  - fd
+  - fzf
+  - git
+  - ripgrep
+
+homebrew_cask_apps:

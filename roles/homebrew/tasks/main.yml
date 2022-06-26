@@ -1,0 +1,37 @@
+---
+- name: Check Homebrew installed
+  ansible.builtin.shell:
+    cmd: if [ "$(which brew)" == "brew not found" ]; then false; else true; fi
+    executable: /bin/bash
+  register: homebrew_installed
+
+- name: Install Homebrew
+  ansible.builtin.shell:
+    cmd: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    executable: /bin/bash
+  when: homebrew_installed is false
+
+- name: Tap Homebrew taps
+  community.general.homebrew_tap:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_taps }}"
+
+- name: Update taps
+  community.general.homebrew:
+    update_homebrew: yes
+
+- name: Install packages
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_packages }}"
+
+- name: Install cask apps
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+    update_homebrew: no
+    # sudo_password: "{{ ansible_become_pass }}"
+  loop: "{{ homebrew_cask_apps }}"
+
